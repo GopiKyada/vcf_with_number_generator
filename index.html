@@ -6,53 +6,143 @@
     <title>VCF Generator</title>
     <style>
       body {
-        font-family: Arial, sans-serif;
-        max-width: 600px;
-        margin: 50px auto;
-        padding: 20px;
-        background: #f9f9f9;
-        border-radius: 10px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: #f4f6f8;
+        margin: 0;
+        padding: 20px; /* ✅ creates breathing room */
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        min-height: 100vh;
+        box-sizing: border-box;
       }
-      textarea {
+
+      .container {
+        background: #fff;
         width: 100%;
-        height: 200px;
-        margin-bottom: 15px;
-        padding: 10px;
-        font-size: 14px;
+        max-width: 600px;
+        padding: 25px;
+        border-radius: 16px;
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        animation: fadeIn 0.4s ease-in-out;
+        box-sizing: border-box;
+
+        /* ✅ ensures space on both sides, even on small screens */
+        margin: 0 auto;
       }
+
+      textarea,
       input,
       button {
         width: 100%;
-        padding: 10px;
-        margin-bottom: 15px;
+        box-sizing: border-box; /* ✅ prevents overflow */
+      }
+
+      h2 {
+        text-align: center;
+        margin-bottom: 20px;
+        font-size: 1.6rem;
+        color: #333;
+      }
+
+      label {
+        font-weight: 600;
+        margin-bottom: 6px;
+        display: block;
+        color: #444;
         font-size: 14px;
-        border-radius: 5px;
-        border: 1px solid #ccc;
       }
+
+      textarea,
+      input {
+        width: 100%;
+        padding: 12px;
+        margin-bottom: 18px;
+        border-radius: 10px;
+        border: 1px solid #d1d5db;
+        font-size: 14px;
+        transition: border 0.2s ease;
+        background: #fafafa;
+      }
+
+      textarea:focus,
+      input:focus {
+        border-color: #007bff;
+        outline: none;
+        background: #fff;
+      }
+
+      textarea {
+        min-height: 150px;
+        resize: vertical;
+      }
+
       button {
-        background-color: #4caf50;
+        width: 100%;
+        padding: 14px;
+        background: #007bff;
         color: white;
+        font-weight: 600;
+        font-size: 15px;
         border: none;
+        border-radius: 10px;
         cursor: pointer;
+        transition: background 0.3s ease, transform 0.1s ease;
       }
+
       button:hover {
-        background-color: #45a049;
+        background: #0056b3;
+      }
+
+      button:active {
+        transform: scale(0.98);
+      }
+
+      .footer {
+        text-align: center;
+        margin-top: 15px;
+        font-size: 13px;
+        color: #666;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @media (max-width: 600px) {
+        .container {
+          padding: 20px;
+        }
+        h2 {
+          font-size: 1.4rem;
+        }
       }
     </style>
   </head>
   <body>
-    <h2>VCF Contact Generator</h2>
-    <label>Enter numbers (one per line):</label>
-    <textarea id="numbers" placeholder="1234567890&#10;9876543210"></textarea>
+    <div class="container">
+      <h2>📇 VCF Contact Generator</h2>
 
-    <label>Prefix for names:</label>
-    <input type="text" id="prefix" placeholder="OR 45" />
+      <label for="numbers">Enter numbers (one per line):</label>
+      <textarea id="numbers" placeholder="1234567890&#10;9876543210"></textarea>
 
-    <label>Output file name:</label>
-    <input type="text" id="filename" placeholder="contacts.vcf" />
+      <label for="prefix">Prefix for names:</label>
+      <input type="text" id="prefix" placeholder="Example: OR 45" />
 
-    <button onclick="generateVCF()">Generate VCF</button>
+      <label for="filename">Output file name:</label>
+      <input type="text" id="filename" placeholder="contacts.vcf" />
+
+      <button onclick="generateVCF()">Generate VCF</button>
+
+      <div class="footer">Made with ❤️ for quick contact management</div>
+    </div>
 
     <script>
       function generateVCF() {
@@ -67,8 +157,9 @@
           .split("\n")
           .map((n) => n.trim())
           .filter((n) => n !== "");
+
         if (numbers.length === 0) {
-          alert("Please enter at least one contact number.");
+          alert("⚠️ Please enter at least one contact number.");
           return;
         }
 
@@ -78,7 +169,6 @@
           vcfContent += `BEGIN:VCARD\nVERSION:3.0\nFN:${name}\nTEL;TYPE=CELL:${num}\nEND:VCARD\n`;
         });
 
-        // Create downloadable file
         const blob = new Blob([vcfContent], { type: "text/vcard" });
         const link = document.createElement("a");
         link.href = URL.createObjectURL(blob);
